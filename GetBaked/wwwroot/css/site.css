@@ -20,3 +20,15 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.btn-primary {
+    background-color: #007396;
+}
+
+    .btn-primary:hover {
+        background-color: #0BB0E3;
+    }
+
+a {
+    color:#964D04;
+}
