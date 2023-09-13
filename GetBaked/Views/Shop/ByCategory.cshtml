@@ -1,6 +1,22 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Product>
+
 @{
 }
 <h1>You are shopping for: @ViewData["Category"]</h1>
+
+<section class="row card-group">
+    @foreach (var product in Model)
+    {
+        <div class="col-lg-4">
+            <div class="card mb-4 ">
+                <div class="card-body text-center h-100">
+                    <h5>@product.Name</h5>
+                    <h6>@product.Price</h6>
+                    <a class="btn btn-primary">
+                        Add to Cart
+                    </a>
+                </div>            
+            </div>
+        </div>
+    }
+</section>
