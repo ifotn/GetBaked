@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using GetBaked.Models;
 
 namespace GetBaked.Data
 {
@@ -9,5 +10,6 @@ namespace GetBaked.Data
             : base(options)
         {
         }
+        public DbSet<GetBaked.Models.Product> Product { get; set; } = default!;
     }
 }
