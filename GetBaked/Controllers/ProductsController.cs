@@ -47,19 +47,19 @@ namespace GetBaked.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        // GET: Products/Create => displays blank form
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.Categories.OrderBy(c => c.Name), "CategoryId", "Name");
             return View();
         }
 
-        // POST: Products/Create
+        // POST: Products/Create => process the create form submission for a new product
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,CategoryId,Photo")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,CategoryId")] Product product, IFormFile? Photo)
         {
             if (ModelState.IsValid)
             {
@@ -84,7 +84,7 @@ namespace GetBaked.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories.OrderBy(c => c.Name), "CategoryId", "Name", product.CategoryId);
             return View(product);
         }
 

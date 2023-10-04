@@ -15,7 +15,7 @@ namespace GetBaked.Models
         public decimal Price { get; set; }
         
         public int CategoryId { get; set; }
-        public string Photo { get; set; }
+        public string? Photo { get; set; }
 
         // parent reference - connection to the 1 category that a specific product belongs to
         public Category? Category { get; set; }
