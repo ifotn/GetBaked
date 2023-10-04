@@ -22,7 +22,9 @@ namespace GetBaked.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
+            var applicationDbContext = _context.Products.Include(p => p.Category)
+                .OrderBy(p => p.Category.Name)
+                .ThenBy(p => p.Name);
             return View(await applicationDbContext.ToListAsync());
         }
 
