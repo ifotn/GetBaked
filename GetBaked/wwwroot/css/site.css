@@ -36,3 +36,7 @@ a {
 table.sortable th:hover {
     cursor: pointer;
 }
+
+.thumb {
+    width: 100px;
+}

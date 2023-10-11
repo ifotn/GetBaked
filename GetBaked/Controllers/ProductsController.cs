@@ -63,6 +63,13 @@ namespace GetBaked.Controllers
         {
             if (ModelState.IsValid)
             {
+                // check for a photo upload & process it if there is one
+                // must be before Add and SaveChanges in order to include the unique photo name with the product
+                if (Photo != null)
+                {
+                    product.Photo = UploadPhoto(Photo);
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -93,7 +100,7 @@ namespace GetBaked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,CategoryId,Photo")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,CategoryId,Photo")] Product product, IFormFile? Photo, string? ExistingPhoto)
         {
             if (id != product.ProductId)
             {
@@ -104,6 +111,17 @@ namespace GetBaked.Controllers
             {
                 try
                 {
+                    // upload & capture new file name if any before we save the update
+                    if (Photo != null)
+                    {
+                        product.Photo = UploadPhoto(Photo);
+                    }
+                    else
+                    {
+                        // keep the existing photo if there is one
+                        product.Photo = ExistingPhoto;
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -165,6 +183,29 @@ namespace GetBaked.Controllers
         private bool ProductExists(int id)
         {
           return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+        }
+
+        // Upload Product Photo method, called from both Create POST and Edit POST
+        private string UploadPhoto(IFormFile Photo)
+        {
+            // get temp file location
+            var tempPath = Path.GetTempFileName();
+
+            // create a unique name using the Guid class (Globally Unique Id)
+            // eg. cookies.png => abc123-cookies.png
+            var fileName = Guid.NewGuid().ToString() + "-" + Photo.FileName;
+
+            // set the destination folder dynamically so it works on any server
+            var uploadPath = System.IO.Directory.GetCurrentDirectory() + "\\wwwroot\\img\\product-images\\" + fileName;
+
+            // copy the file to the destination folder
+            using (var stream = new FileStream(uploadPath, FileMode.Create))
+            {
+                Photo.CopyTo(stream);
+            }
+
+            // send back the unique file name
+            return fileName;
         }
     }
 }
