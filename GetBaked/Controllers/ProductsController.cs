@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GetBaked.Data;
 using GetBaked.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetBaked.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,6 +30,7 @@ namespace GetBaked.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        [AllowAnonymous] // make this method only available to anyone even anonymous users
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
