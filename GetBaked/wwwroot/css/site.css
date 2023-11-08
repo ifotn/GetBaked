@@ -40,3 +40,7 @@ table.sortable th:hover {
 .thumb {
     width: 100px;
 }
+
+.input-small {
+    width: 70px;
+}

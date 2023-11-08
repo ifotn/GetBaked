@@ -11,10 +11,21 @@
             <div class="card mb-4 ">
                 <div class="card-body text-center h-100">
                     <h5>@product.Name</h5>
-                    <h6>@product.Price</h6>
-                    <a class="btn btn-primary">
-                        Add to Cart
-                    </a>
+                    @if (@product.Photo != null)
+                    {
+                        <img src="~/img/product-images/@product.Photo" alt="Product Photo" class="thumb" />
+                    }
+                    <h6>@String.Format("{0:c}", product.Price)</h6>
+                    <form method="post" action="/Shop/AddToCart">
+                        <input type="hidden" name="ProductId" value="@product.ProductId" />
+                        <fieldset>
+                            <label for="Quantity">Quantity: </label>
+                            <input type="number" id="Quantity" name="Quantity" required min="1" max="9999" class="input-small" />
+                        </fieldset>                         
+                        <button class="btn btn-primary m-2">
+                            Add to Cart
+                        </button>
+                    </form>                       
                 </div>            
             </div>
         </div>

@@ -1,29 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Category>
+
 @{
 }
 <h1>Buy some Delicious Baked Goods</h1>
 
 <ul>
-    <li>
-        <a asp-controller="Shop" asp-action="ByCategory" asp-route-name="Breads">
-            Breads
-        </a>  
-    </li>
-    <li>
-        <a asp-controller="Shop" asp-action="ByCategory" asp-route-name="Cakes">
-            Cakes
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Shop" asp-action="ByCategory" asp-route-name="Muffins">
-            Muffins
-        </a>
-    </li>
-    <li>
-        <a asp-controller="Shop" asp-action="ByCategory" asp-route-name="Gluten-Free">
-            Gluten-Free
-        </a>
-    </li>
+    @foreach (var category in Model)
+    {
+        <li>
+            <a asp-action="ByCategory" asp-route-id="@category.CategoryId">
+                @category.Name
+            </a>        
+        </li>
+    }
 </ul>
