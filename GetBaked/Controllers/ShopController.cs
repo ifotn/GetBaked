@@ -45,5 +45,68 @@ namespace GetBaked.Controllers
             // send the products list to the view for display
             return View(products);
         }
+
+        // POST: /Shop/AddToCart
+        [HttpPost]
+        public IActionResult AddToCart(int ProductId, int Quantity)
+        {
+            // get product so we can access the current price
+            var product = _context.Products.Find(ProductId);
+
+            // does this cart already have this product? 
+            var cartItem = _context.CartItems.SingleOrDefault(c => c.ProductId == ProductId &&
+                c.CustomerId == GetCustomerId());
+
+            if (cartItem == null)
+            {
+                // create a new CartItem
+                cartItem = new CartItem
+                {
+                    ProductId = ProductId,
+                    Quantity = Quantity,
+                    Price = product.Price,
+                    CustomerId = GetCustomerId()
+                };
+                
+                _context.Add(cartItem);
+            }
+            else
+            {
+                cartItem.Quantity += Quantity;
+                _context.Update(cartItem);
+            }                
+
+            // save to db          
+            _context.SaveChanges();
+
+            // show the cart page
+            return RedirectToAction("Cart");
+        }
+
+        // identify customer to ensure unique carts
+        private string GetCustomerId()
+        {
+            // check if we already have a session var for this user
+            if (HttpContext.Session.GetString("CustomerId") == null)
+            {
+                // create new session var using a GUID
+                HttpContext.Session.SetString("CustomerId", Guid.NewGuid().ToString()); 
+            }
+
+            // pass back the session var so we can help identify this user's cart (even when anonymous)
+            return HttpContext.Session.GetString("CustomerId");
+        }
+
+        // GET: /Shop/Cart
+        public IActionResult Cart()
+        {
+            // identify which cart to fetch & display
+            var customerId = GetCustomerId();
+
+            // query the db for the cart items
+            var cartItems = _context.CartItems.Where(c => c.CustomerId == customerId).ToList();
+
+            return View(cartItems);
+        }
     }
 }
