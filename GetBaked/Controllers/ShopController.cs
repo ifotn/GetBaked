@@ -1,6 +1,7 @@
 ﻿using GetBaked.Data;
 using GetBaked.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GetBaked.Controllers
 {
@@ -103,10 +104,31 @@ namespace GetBaked.Controllers
             // identify which cart to fetch & display
             var customerId = GetCustomerId();
 
-            // query the db for the cart items
-            var cartItems = _context.CartItems.Where(c => c.CustomerId == customerId).ToList();
+            // query the db for the cart items; include or JOIN to parent Product to get Product details
+            var cartItems = _context.CartItems
+                .Include(c => c.Product)
+                .Where(c => c.CustomerId == customerId).ToList();
+
+            // count total # of items in cart for navbar display & store in Session var
+            var itemCount = (from c in cartItems
+                             select c.Quantity).Sum();
+            HttpContext.Session.SetInt32("ItemCount", itemCount);
 
             return View(cartItems);
+        }
+
+        // GET: /Shop/RemoveFromCart/5
+        public IActionResult RemoveFromCart(int id)
+        {
+            // find the item marked for deletion
+            var cartItem = _context.CartItems.Find(id);
+
+            // perform delete
+            _context.CartItems.Remove(cartItem);
+            _context.SaveChanges();
+
+            // refresh cart
+            return RedirectToAction("Cart");
         }
     }
 }

@@ -21,7 +21,7 @@ body {
   margin-bottom: 60px;
 }
 
-.btn-primary {
+.btn-primary, .badge-primary {
     background-color: #007396;
 }
 
@@ -44,3 +44,4 @@ table.sortable th:hover {
 .input-small {
     width: 70px;
 }
+
