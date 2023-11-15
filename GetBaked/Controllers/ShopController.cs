@@ -188,7 +188,7 @@ namespace GetBaked.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long?)order.OrderTotal * 100,
+                            UnitAmount = (long?)(order.OrderTotal * 100),
                             Currency = "cad",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -210,6 +210,53 @@ namespace GetBaked.Controllers
             // 4 - redirect based on Stripe response
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303);
+        }
+
+        // GET: /Shop/SaveOrder => save order to db after payment
+        public IActionResult SaveOrder()
+        {
+            // get the order from session var
+            var order = HttpContext.Session.GetObject<Order>("Order");
+
+            // create new order in db
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+            // copy each cartItem to a new OrderDetail as a child of the new order
+            // identify which cart to fetch & display
+            var customerId = GetCustomerId();
+
+            // query the db for the cart items; include or JOIN to parent Product to get Product details
+            var cartItems = _context.CartItems
+                .Include(c => c.Product)
+                .Where(c => c.CustomerId == customerId);
+
+            foreach (var item in cartItems)
+            {
+                var orderDetail = new OrderDetail
+                {
+                    Quantity = item.Quantity,
+                    Price = item.Price,
+                    ProductId = item.ProductId,
+                    OrderId = order.OrderId
+                };
+
+                _context.OrderDetails.Add(orderDetail);
+            }
+            _context.SaveChanges();
+
+            // empty cart
+            foreach (var item in cartItems)
+            {
+                _context.CartItems.Remove(item);
+            }
+            _context.SaveChanges();
+
+            HttpContext.Session.Clear();
+
+            // redirect to Orders/Details/5
+            return RedirectToAction("Details", "Orders", new { @id = order.OrderId });
+
         }
     }
 }
