@@ -32,6 +32,10 @@ namespace GetBaked.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            /* scenarios for unit testing
+             * 1 - we have an id but it doesn't exist in Categories table => 404
+             * 2 - id is missing => 404
+             * 3 - id is valid => return the view with the correct Category  */
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
