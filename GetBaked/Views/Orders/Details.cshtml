@@ -1,13 +1,13 @@
 ﻿@model GetBaked.Models.Order
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Order Details";
 }
 
-<h1>Details</h1>
+<h1>Order Details</h1>
 
 <div>
-    <h4>Order</h4>
+    <h4>Order #: @Model.OrderId</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -72,7 +72,21 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.OrderId">Edit</a> |
+<table class="table table-striped table-hover">
+    <thead>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </thead>
+    @foreach (var item in Model.OrderDetails)
+    {
+        <tr>
+            <td>@item.Product.Name</td>
+            <td>@item.Quantity</td>
+            <td>@String.Format("{0:c}", item.Price)</td>
+        </tr>
+    }
+</table>
+<div> 
     <a asp-action="Index">Back to List</a>
 </div>

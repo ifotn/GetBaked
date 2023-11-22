@@ -10,6 +10,7 @@ namespace GetBaked.Models
         public int Quantity { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:c}")]
         public decimal Price { get; set; }
 
         [Required]
