@@ -38,17 +38,18 @@ namespace GetBaked.Controllers
              * 3 - id is valid => return the view with the correct Category  */
             if (id == null || _context.Categories == null)
             {
-                return NotFound();
+                // return NotFound();
+                return View("Error");
             }
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.CategoryId == id);
             if (category == null)
             {
-                return NotFound();
+                return View("Error"); // NotFound();
             }
 
-            return View(category);
+            return View("Details", category);
         }
 
         // GET: Categories/Create
