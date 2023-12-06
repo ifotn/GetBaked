@@ -69,6 +69,7 @@ namespace GetBaked.Controllers
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                //return View("Index");
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
